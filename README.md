@@ -1,3 +1,3 @@
-# SwiftyGen
+# MetaSwift
 
 A description of this package.
