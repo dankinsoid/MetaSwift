@@ -1,8 +1,8 @@
 import XCTest
-@testable import SwiftyGen
+@testable import MetaSwift
 
 final class SwiftyGenTests: XCTestCase {
     func testExample() throws {
-        try! SwiftyGen().test()
+       let monitor = try FileMonitor(url: URL(fileURLWithPath: ""))
     }
 }

@@ -5,17 +5,18 @@
 import Foundation
 import SwiftSyntax
 
-extension SyntaxProtocol {
+extension Syntax {
 
 	public var asItems: [CodeBlockItemSyntax] {
-		(self as? CodeBlockItemSyntax).map { [$0] } ??
-				(self as? CodeBlockItemListSyntax).map { Array($0) } ??
+		self.as(CodeBlockItemSyntax.self).map { [$0] } ??
+				self.as(CodeBlockItemListSyntax.self).map { Array($0) } ??
+				self.as(SourceFileSyntax.self).map { Array($0.statements) } ??
 				[
-					SyntaxFactory.makeCodeBlockItem(item: Syntax(self), semicolon: nil, errorTokens: nil)
+					SyntaxFactory.makeCodeBlockItem(item: self, semicolon: nil, errorTokens: nil)
 				]
 	}
 }
 
 public func +<S: SyntaxProtocol, R: SyntaxProtocol>(_ lhs: S, _ rhs: R) -> CodeBlockItemListSyntax {
-	SyntaxFactory.makeCodeBlockItemList(lhs.asItems + rhs.asItems)
+	SyntaxFactory.makeCodeBlockItemList(Syntax(lhs).asItems + Syntax(rhs).asItems)
 }

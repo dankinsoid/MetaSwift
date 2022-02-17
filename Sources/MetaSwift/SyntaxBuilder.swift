@@ -8,64 +8,41 @@ import SwiftSyntax
 @resultBuilder
 public enum SyntaxBuilder {
 
-	public static func buildBlock(_ components: [CodeBlockItemSyntax]...) -> [CodeBlockItemSyntax] {
-		components.flatMap { $0 }
+	public static func buildBlock(_ components: Syntax...) -> Syntax {
+		buildArray(components)
 	}
 
-	public static func buildExpression<S: SyntaxProtocol>(_ expression: S) -> [CodeBlockItemSyntax] {
-		[
-			SyntaxFactory.makeCodeBlockItem(item: Syntax(expression), semicolon: nil, errorTokens: nil)
-		]
+	public static func buildExpression<S: SyntaxProtocol>(_ expression: S) -> Syntax {
+		Syntax(expression)
 	}
 
-	public static func buildExpression(_ expression: CodeBlockItemSyntax) -> [CodeBlockItemSyntax] {
-		[expression]
+	public static func buildExpression(_ expression: String) -> Syntax {
+		Syntax(code: expression)
 	}
 
-	public static func buildExpression(_ expression: Syntax) -> [CodeBlockItemSyntax] {
-		[
-			SyntaxFactory.makeCodeBlockItem(item: expression, semicolon: nil, errorTokens: nil)
-		]
+	public static func buildEither(first component: Syntax) -> Syntax {
+		component
 	}
 
-	public static func buildExpression(_ expression: SourceFileSyntax) -> [CodeBlockItemSyntax] {
-		Array(expression.statements)
+	public static func buildEither(second component: Syntax) -> Syntax {
+		component
 	}
 
-	public static func buildExpression(_ expression: CodeBlockItemListSyntax) -> [CodeBlockItemSyntax] {
-		Array(expression)
+	public static func buildOptional(_ component: Syntax?) -> Syntax {
+		component ?? Syntax(SyntaxFactory.makeCodeBlockItemList([]))
 	}
 
-	public static func buildExpression(_ expression: String) -> [CodeBlockItemSyntax] {
-		do {
-			let parsed = try SyntaxParser.parse(source: expression)
-			return Array(parsed.statements)
-		} catch {
-			return buildExpression(SyntaxFactory.makeUnknown(expression))
+	public static func buildArray(_ components: [Syntax]) -> Syntax {
+		if components.count == 1 {
+			return components[0]
+		} else {
+			return Syntax(
+					SyntaxFactory.makeCodeBlockItemList(components.flatMap({ $0.asItems }))
+			)
 		}
 	}
 
-	public static func buildEither(first component: [CodeBlockItemSyntax]) -> [CodeBlockItemSyntax] {
+	public static func buildLimitedAvailability(_ component: Syntax) -> Syntax {
 		component
-	}
-
-	public static func buildEither(second component: [CodeBlockItemSyntax]) -> [CodeBlockItemSyntax] {
-		component
-	}
-
-	public static func buildOptional(_ component: [CodeBlockItemSyntax]?) -> [CodeBlockItemSyntax] {
-		component ?? []
-	}
-
-	public static func buildArray(_ components: [[CodeBlockItemSyntax]]) -> [CodeBlockItemSyntax] {
-		components.flatMap { $0 }
-	}
-
-	public static func buildLimitedAvailability(_ component: [CodeBlockItemSyntax]) -> [CodeBlockItemSyntax] {
-		component
-	}
-
-	public static func buildFinalResult(_ component: [CodeBlockItemSyntax]) -> CodeBlockItemListSyntax {
-		SyntaxFactory.makeCodeBlockItemList(component)
 	}
 }
