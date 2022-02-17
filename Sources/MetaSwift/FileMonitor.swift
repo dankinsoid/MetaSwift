@@ -30,6 +30,8 @@ final class FileMonitor {
 	}
 
 	deinit {
-		try? fileHandle.close()
+		if #available(macOS 10.15, *) {
+			try? fileHandle.close()
+		}
 	}
 }
