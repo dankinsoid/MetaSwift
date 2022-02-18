@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "MetaSwift",
+    platforms: [.macOS(.v10_15)],
     products: [
         .library(name: "MetaSwift", targets: ["MetaSwift"]),
     ],
