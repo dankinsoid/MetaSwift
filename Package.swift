@@ -10,7 +10,6 @@ let package = Package(
         .library(name: "MetaSwift", targets: ["MetaSwift"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.0.0"),
         .package(name: "SwiftSyntax", url: "https://github.com/apple/swift-syntax.git", .exact("0.50500.0")),
         .package(name: "SwiftSemantics", url: "https://github.com/dankinsoid/SwiftSemantics.git", .exact("5.5.1"))
     ],
@@ -19,8 +18,7 @@ let package = Package(
             name: "MetaSwift",
             dependencies: [
                 "SwiftSyntax",
-                "SwiftSemantics",
-                .product(name: "ArgumentParser", package: "swift-argument-parser")
+                "SwiftSemantics"
             ]
         ),
         .testTarget(name: "MetaSwiftTests", dependencies: ["MetaSwift"]),
